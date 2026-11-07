@@ -1,12 +1,15 @@
 """
 Re-procesa salida_deteccion_personas_profesional.mp4 con YOLOv8 + tracking
-para obtener centroides reales por ID y generar:
-  - heatmap_zonas.png       (Figura 12)
-  - dwell_time_top10.png    (Figura 13)
-  - frame_representativo.png (Figura 11 — frame extraído del video)
+para obtener centroides reales por ID y generar, en resultados/:
+  - heatmap_zonas.png
+  - dwell_time_top10.png
+  - frame_representativo.png (frame extraído del video)
 
 Adicionalmente analiza el CSV profesional para producir:
-  - resumen_pro.json         (datos del resumen profesional para tabla Word)
+  - resumen_pro.json
+
+Entradas: el video y el CSV que genera el notebook profesional en la raíz
+del repositorio. Si el CSV no está en la raíz, se usa el de resultados/.
 """
 import json
 from pathlib import Path
@@ -19,9 +22,13 @@ import matplotlib.pyplot as plt
 from ultralytics import YOLO
 from scipy.ndimage import gaussian_filter
 
-CARPETA = Path("/Users/dev/Downloads/BASESDEDATOS2/laboratorio18abrilsegundo")
-VIDEO = CARPETA / "salida_deteccion_personas_profesional.mp4"
-CSV_PRO = CARPETA / "metricas_deteccion_personas_profesional.csv"
+RAIZ = Path(__file__).resolve().parent.parent
+CARPETA = RAIZ / "resultados"
+CARPETA.mkdir(exist_ok=True)
+VIDEO = RAIZ / "salida_deteccion_personas_profesional.mp4"
+CSV_PRO = RAIZ / "metricas_deteccion_personas_profesional.csv"
+if not CSV_PRO.exists():
+    CSV_PRO = CARPETA / "metricas_deteccion_personas_profesional.csv"
 
 # ============== 1) FRAME REPRESENTATIVO DEL MP4 ==============
 print(">> Extrayendo frame representativo del MP4...")
